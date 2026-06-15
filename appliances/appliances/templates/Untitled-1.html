@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ru">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Учет сотрудников МВД</title>
+	<style>
+		body{font-family:Arial,Helvetica,sans-serif;background:#f4f6f8;margin:0;color:#222}
+		.container{max-width:1100px;margin:32px auto;padding:20px;background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+		header{display:flex;align-items:center;justify-content:space-between}
+		h1{font-size:20px;margin:0}
+		.controls{display:flex;gap:10px;align-items:center}
+		input[type="text"],select{padding:8px;border:1px solid #ccd;border-radius:4px}
+		button{padding:8px 12px;border:none;border-radius:4px;background:#0b66ff;color:#fff;cursor:pointer}
+		button.secondary{background:#6c757d}
+		table{width:100%;border-collapse:collapse;margin-top:18px}
+		th,td{padding:10px;border-bottom:1px solid #eef;text-align:left}
+		th{background:#f7f9fb;color:#333}
+		.tag{display:inline-block;padding:4px 8px;border-radius:12px;background:#eef;color:#0b66ff;font-size:12px}
+		form.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+		label{font-size:13px}
+		.actions{display:flex;gap:6px}
+		.empty{padding:20px;text-align:center;color:#666}
+		@media(max-width:720px){.container{margin:12px}form.grid{grid-template-columns:1fr}}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<header>
+			<h1>Система учета сотрудников МВД</h1>
+			<div class="controls">
+				<input id="search" type="text" placeholder="Поиск по ФИО, подразделению, званию"/>
+				<select id="filter">
+					<option value="">Все подразделения</option>
+					<option>Отдел полиции №1</option>
+					<option>Отдел полиции №2</option>
+					<option>УВД</option>
+				</select>
+				<button id="new">Добавить</button>
+			</div>
+		</header>
+
+		<section id="list">
+			<table>
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>ФИО</th>
+						<th>Звание</th>
+						<th>Подразделение</th>
+						<th>Телефон</th>
+						<th>Статус</th>
+						<th>Действия</th>
+					</tr>
+				</thead>
+				<tbody id="rows">
+					<tr>
+						<td colspan="7" class="empty">Нет данных. Нажмите «Добавить» для создания записи.</td>
+					</tr>
+				</tbody>
+			</table>
+		</section>
+
+		<section id="formSection" style="display:none">
+			<h2 style="font-size:16px;margin-top:18px">Карточка сотрудника</h2>
+			<form id="empForm" class="grid">
+				<div>
+					<label>ФИО</label>
+					<input type="text" id="fio" required />
+				</div>
+				<div>
+					<label>Звание</label>
+					<input type="text" id="rank" />
+				</div>
+				<div>
+					<label>Подразделение</label>
+					<input type="text" id="unit" />
+				</div>
+				<div>
+					<label>Телефон</label>
+					<input type="text" id="phone" />
+				</div>
+				<div>
+					<label>Статус</label>
+					<select id="status"><option>Действует</option><option>Отставлен</option><option>В отпуске</option></select>
+				</div>
+				<div style="align-self:end">
+					<div class="actions">
+						<button type="submit">Сохранить</button>
+						<button type="button" class="secondary" id="cancel">Отмена</button>
+					</div>
+				</div>
+			</form>
+		</section>
+	</div>
+
+	<script>
+		const newBtn = document.getElementById('new');
+		const formSection = document.getElementById('formSection');
+		const listSection = document.getElementById('list');
+		const empForm = document.getElementById('empForm');
+		const rows = document.getElementById('rows');
+		const cancel = document.getElementById('cancel');
+
+		let data = [];
+
+		function render(){
+			if(data.length===0){
+				rows.innerHTML = '<tr><td colspan="7" class="empty">Нет записей.</td></tr>'
+				return
+			}
+			rows.innerHTML = data.map((e,i)=>`<tr><td>${i+1}</td><td>${e.fio}</td><td>${e.rank||''}</td><td>${e.unit||''}</td><td>${e.phone||''}</td><td><span class="tag">${e.status||''}</span></td><td class="actions"><button data-i="${i}" class="edit">Ред.</button><button data-i="${i}" class="del secondary">Уд.</button></td></tr>`).join('')
+		}
+
+		newBtn.addEventListener('click',()=>{formSection.style.display='block';listSection.style.display='none';empForm.reset()})
+		cancel.addEventListener('click',()=>{formSection.style.display='none';listSection.style.display='block'})
+
+		empForm.addEventListener('submit',e=>{
+			e.preventDefault();
+			const item={fio:document.getElementById('fio').value,rank:document.getElementById('rank').value,unit:document.getElementById('unit').value,phone:document.getElementById('phone').value,status:document.getElementById('status').value}
+			data.push(item);
+			render();
+			formSection.style.display='none';listSection.style.display='block';
+		})
+
+		rows.addEventListener('click',e=>{
+			if(e.target.classList.contains('del')){
+				const i = +e.target.dataset.i; data.splice(i,1); render();
+			}
+			if(e.target.classList.contains('edit')){
+				const i = +e.target.dataset.i; const it = data[i];
+				document.getElementById('fio').value=it.fio;document.getElementById('rank').value=it.rank;document.getElementById('unit').value=it.unit;document.getElementById('phone').value=it.phone;document.getElementById('status').value=it.status;
+				data.splice(i,1);
+				formSection.style.display='block';listSection.style.display='none';
+			}
+		})
+
+		// простая фильтрация
+		document.getElementById('search').addEventListener('input',e=>{
+			const q = e.target.value.toLowerCase();
+			const filtered = data.filter(it=> (it.fio+' '+(it.unit||'')+' '+(it.rank||'')).toLowerCase().includes(q));
+			rows.innerHTML = filtered.length? filtered.map((e,i)=>`<tr><td>${i+1}</td><td>${e.fio}</td><td>${e.rank||''}</td><td>${e.unit||''}</td><td>${e.phone||''}</td><td><span class="tag">${e.status||''}</span></td><td class="actions"><button class="edit" disabled>Ред.</button><button class="del secondary" disabled>Уд.</button></td></tr>`).join('') : '<tr><td colspan="7" class="empty">Ничего не найдено</td></tr>'
+		})
+
+		render();
+	</script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="hero">
+    <h1>Портал управления данными сотрудников МВД и их учетом</h1>
+    <p>Сила — в кадрах!</p>
+</div>
+
+<div class="categories">
+    <h2>Отделы</h2>
+    <div class="categories-grid">
+        {% for category in categories %}
+        <a href="{% url 'catalog' %}?category={{ category.slug }}" class="category-card">
+            <h3>{{ category.name }}</h3>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="categories">
+    <h2>Почетные сотрудники</h2>
+    <div class="products-grid">
+        {% for product in products %}
+        <div class="product-card">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+            <div class="no-image">Нет фото</div>
+            {% endif %}
+            <h3>{{ product.name }}</h3>
+            {% if user.is_superuser %}
+            <form action="{% url 'toggle_featured' product.id %}" method="post" style="margin-top: 0.75rem;">
+                {% csrf_token %}
+                <button type="submit" class="btn-secondary">
+                    {% if product.featured %}Убрать из почётных{% else %}Добавить в почётные{% endif %}
+                </button>
+            </form>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% if user.is_superuser and admin_products %}
+<div class="categories">
+    <h2>Управление почётными сотрудниками</h2>
+    <div class="products-grid">
+        {% for product in admin_products %}
+        <div class="product-card">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+            <div class="no-image">Нет фото</div>
+            {% endif %}
+            <h3>{{ product.name }}</h3>
+            <p>{% if product.featured %}<strong>Уже почётный</strong>{% else %}Не в почётных{% endif %}</p>
+            <form action="{% url 'toggle_featured' product.id %}" method="post" style="margin-top: 0.75rem;">
+                {% csrf_token %}
+                <button type="submit" class="btn-secondary">
+                    {% if product.featured %}Убрать{% else %}Добавить{% endif %}
+                </button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="product-detail">
+    <div class="product-images">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        {% else %}
+        <div class="no-image large">Нет фото</div>
+        {% endif %}
+    </div>
+    
+    <div class="product-info">
+        <h1>{{ product.name }}</h1>
+        <p class="category">Категория: {{ product.category.name }}</p>
+        
+        
+        <div class="stock-info">
+            {% if product.stock > 0 %}
+            <span class="in-stock"> продолжает служить </span>
+            {% else %}
+            <span class="out-of-stock">Уволен </span>
+            {% endif %}
+        </div>
+        
+        <div class="product-actions">
+            {% if product.stock > 0 %}
+                {% if perms.main.request_employee_data %}
+                    <a href="{% url 'cart_add' product.id %}" class="btn-primary-large">Выбрать</a>
+                {% else %}
+                    <button class="btn-disabled" disabled>Нет доступа</button>
+                {% endif %}
+            {% else %}
+                <button class="btn-disabled" disabled>Нет в наличии</button>
+            {% endif %}
+        </div>
+        
+        <div class="product-description">
+            <h3>Должность</h3>
+            <p>{{ product.description }}</p>
+        </div>
+        
+        {% if product.specifications %}
+        <div class="product-specifications">
+            <h3>Биография</h3>
+            <p>{{ product.specifications|linebreaks }}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

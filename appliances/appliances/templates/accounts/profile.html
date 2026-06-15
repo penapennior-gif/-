@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-card">
+        <h2>Личный кабинет</h2>
+        
+        <div class="profile-info">
+            <div class="profile-photo">
+                {% if profile.photo %}
+                    <img src="{{ profile.photo.url }}" alt="Фото профиля" class="profile-image">
+                {% else %}
+                    <div class="profile-image-placeholder">Нет фото</div>
+                {% endif %}
+            </div>
+            
+            <div class="profile-details">
+                <div class="info-row">
+                    <span class="label">Имя пользователя:</span>
+                    <span class="value">{{ profile.user.username }}</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Полное имя:</span>
+                    <span class="value">{{ profile.user.first_name }} {{ profile.user.last_name }}</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Email:</span>
+                    <span class="value">{{ profile.user.email }}</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Должность:</span>
+                    <span class="value">{{ profile.position|default:"Не указана" }}</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Возраст:</span>
+                    <span class="value">{{ profile.age|default:"Не указан" }}</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Срок службы:</span>
+                    <span class="value">{{ profile.service_years }} лет</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Дата устройства:</span>
+                    <span class="value">
+                        {% if profile.hired_date %}
+                            {{ profile.hired_date|date:"d.m.Y" }}
+                        {% else %}
+                            Не указана
+                        {% endif %}
+                    </span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Место прохождения службы:</span>
+                    <span class="value">{{ profile.service_location|default:"Не указано" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.profile-container {
+    max-width: 900px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+}
+
+.profile-card {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+}
+
+.profile-card h2 {
+    margin-bottom: 1.5rem;
+    color: #0b3d91;
+    text-align: center;
+}
+
+.profile-info {
+    display: grid;
+    grid-template-columns: minmax(220px, 250px) 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.profile-photo {
+    display: flex;
+    justify-content: center;
+}
+
+.profile-image,
+.profile-image-placeholder {
+    width: 100%;
+    max-width: 250px;
+    height: 250px;
+    border-radius: 20px;
+    object-fit: cover;
+    border: 2px solid #0b3d91;
+}
+
+.profile-image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3f7ff;
+    color: #55637d;
+    border: 2px dashed rgba(11, 61, 145, 0.3);
+    padding: 1rem;
+    text-align: center;
+}
+
+.profile-details {
+    display: grid;
+    gap: 1rem;
+}
+
+.info-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e1e9f7;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-row .label {
+    font-weight: 700;
+    color: #0b3d91;
+}
+
+.info-row .value {
+    color: #333;
+}
+
+@media (max-width: 700px) {
+    .profile-info {
+        grid-template-columns: 1fr;
+    }
+
+    .info-row {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-image,
+    .profile-image-placeholder {
+        max-width: 100%;
+        height: auto;
+    }
+}
+</style>
+
+{% endblock %}

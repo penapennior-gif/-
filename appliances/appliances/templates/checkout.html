@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="checkout-container">
+    <h1>Оформление заявки</h1>
+    
+    <div class="checkout-grid">
+        <div class="order-form">
+            <h3>Контактная информация</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn-primary">Подтвердить заявку</button>
+            </form>
+        </div>
+        
+        <div class="order-summary">
+            <h3>Выбранные Госслужащие</h3>
+            {% for item in cart_items %}
+            <div class="summary-item">
+                <span>{{ item.product.name }}</span>
+                
+            </div>
+            {% endfor %}
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ГУУС{% endblock %}</title>
+    <link rel="icon" href="{% static 'images/icon.png' %}" type="image/png">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <h1><a href="{% url 'index' %}"><img src="{% static 'images/icon.png' %}" alt="Логотип" class="logo-icon"> МВД РОССИИ</a></h1>
+            </div>
+            <ul class="nav-links">
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'index' %}">Главная</a></li>
+                    <li><a href="{% url 'catalog' %}">Сотрудники</a></li>
+                    <li><a href="{% url 'profile' %}">{{ user.username }}</a></li>
+                    <li><a href="{% url 'logout' %}">Выйти</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">Войти</a></li>
+                {% endif %}
+            </ul>
+            {% if user.is_authenticated and perms.main.request_employee_data and request.session.special_access_granted %}
+            <div class="cart-icon">
+                <a href="{% url 'cart' %}">
+                    Выбранные должностные лица
+                    <span class="cart-count">{{ cart_count }}</span>
+                </a>
+            </div>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>МВД РОССИИ
+                </h3>
+                <p>Управление учетом сотрудников</p>
+            </div>
+            <div class="footer-section">
+                <h4>Контакты</h4>
+                <p>📞 7-967-447-92-20</p>
+                <p>📧 info@mvdrf.ru</p>
+            </div>
+            <div class="footer-section">
+                <h4>Режим работы</h4>
+                <p>Пн-Пт: 9.00-17:00</p>
+                <p>Сб-Вс: 19:00 - 11:00</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 МВДРФ.права защищены.</p>
+        </div>
+    </footer>
+</body>
+</html>

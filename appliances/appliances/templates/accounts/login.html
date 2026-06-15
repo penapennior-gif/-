@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Вход в аккаунт</h2>
+        <form method="post">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+            <div class="error-message">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+            <div class="form-group">
+                <label for="id_username">Код сотрудника</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                <div class="error-message">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="id_password">Пароль</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                <div class="error-message">{{ form.password.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="id_access_code">Специальный код доступа</label>
+                {{ form.access_code }}
+                {% if form.access_code.errors %}
+                <div class="error-message">{{ form.access_code.errors }}</div>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn-primary">Войти</button>
+        </form>
+        
+    </div>
+</div>
+{% endblock %}

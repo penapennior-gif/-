@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="catalog-container">
+    <div class="filters">
+        <h3>Категории</h3>
+        <ul>
+            <li><a href="{% url 'catalog' %}" {% if not current_category %}class="active"{% endif %}>Все Сотрудники</a></li>
+            {% for category in categories %}
+            <li><a href="{% url 'catalog' %}?category={{ category.slug }}" {% if current_category and current_category.slug == category.slug %}class="active"{% endif %}>{{ category.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="products-list">
+        <h2>{% if current_category %}{{ current_category.name }}{% else %}Все сотрудники{% endif %}</h2>
+        <div class="products-grid">
+            {% for product in products %}
+            <div class="product-card">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                {% else %}
+                <div class="no-image">Нет фото</div>
+                {% endif %}
+                <h3>{{ product.name }}</h3>
+
+                <div class="product-actions">
+                    <a href="{% url 'product_detail' product.slug %}" class="btn-secondary">Подробнее</a>
+                
+                </div>
+            </div>
+            {% empty %}
+            <p class="no-products">Сотрудников не найдено</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

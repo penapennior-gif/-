@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Доступ запрещён</h2>
+        <p>У вас нет доступа к оформлению заявок. Сначала введите специальный код доступа.</p>
+        <a href="{% url 'logout' %}" class="btn-primary">Выйти из аккаунта</a>
+    </div>
+</div>
+{% endblock %}
